@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Jogo da Velha</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Jogo da Velha</h1>
+  <div class="game-board" id="board"></div>
+  <div id="resultado"></div>
+  <button id="reset">Reiniciar</button>
+  <script>
+    const board = document.getElementById('board');
+    const resultado = document.getElementById('resultado');
+    const resetBtn = document.getElementById('reset');
+    let cells = [];
+    let currentPlayer = 'X';
+    let gameActive = true;
+ 
+    function createBoard(){
+      board.innerHTML = "";
+      cells = [];
+      for(let i = 0; i < 9; i++){
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.dataset.index = i;
+        cell.addEventListener('click', cellClick);
+        board.appendChild(cell);
+        cells.push(cell);
+      }
+      resultado.textContent = "";
+      currentPlayer = 'X';
+      gameActive = true;
+    }
+ 
+    function cellClick(e){
+      const cell = e.target;
+      if(cell.textContent !== "" || !gameActive) return;
+      cell.textContent = currentPlayer;
+      if(checkWinner()){
+        resultado.textContent = `Jogador ${currentPlayer} venceu!`;
+        gameActive = false;
+      } else if(cells.every(c => c.textContent !== "")){
+        resultado.textContent = "Empate!";
+        gameActive = false;
+      } else {
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+      }
+    }
+ 
+    function checkWinner(){
+      const winCombos = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+      ];
+      return winCombos.some(comb =>
+        comb.every(i => cells[i].textContent === currentPlayer)
+      );
+    }
+ 
+    resetBtn.onclick = createBoard;
+    createBoard();
+  </script>
+</body>
+</html>
